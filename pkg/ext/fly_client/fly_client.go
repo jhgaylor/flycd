@@ -4,14 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/GiGurra/cmder"
 	"github.com/gigurra/flycd/pkg/domain/model"
 	"github.com/gigurra/flycd/pkg/util/util_tab_table"
 	"github.com/gigurra/flycd/pkg/util/util_work_dir"
 	"github.com/samber/lo"
-	"strconv"
-	"strings"
-	"time"
 )
 
 type AppListItem struct {
@@ -675,7 +676,7 @@ func (c FlyClientImpl) CreateNewApp(
 		WithStdOutErrForwarded().
 		Run(ctx)
 	if res.Err != nil {
-		return fmt.Errorf("error creating app %s: %w", cfg.App, res.Err)
+		return fmt.Errorf("error creating app %s: %w.\nProvided Params: %v", cfg.App, res.Err, allParams)
 	}
 	return nil
 }
@@ -689,8 +690,8 @@ func (c FlyClientImpl) DeployExistingApp(
 ) error {
 	allParams := append([]string{"deploy"}, cfg.DeployParams...)
 	allParams = append(allParams, "--remote-only", "--detach")
-	if !lo.Contains(allParams, "--region") && !lo.Contains(allParams, "-r") {
-		allParams = append(allParams, "--region", region)
+	if !lo.Contains(allParams, "--regions") && !lo.Contains(allParams, "-r") {
+		allParams = append(allParams, "--regions", region)
 	}
 
 	res := tempDir.
@@ -701,7 +702,7 @@ func (c FlyClientImpl) DeployExistingApp(
 		WithStdOutErrForwarded().
 		Run(ctx)
 	if res.Err != nil {
-		return fmt.Errorf("error deploying app %s: %w", cfg.App, res.Err)
+		return fmt.Errorf("error deploying app! %s: %w. Params: %v", cfg.App, res.Err, allParams)
 	}
 	return nil
 }
