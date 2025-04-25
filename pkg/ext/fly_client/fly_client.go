@@ -665,8 +665,8 @@ func (c FlyClientImpl) CreateNewApp(
 	if twoStep {
 		allParams = append(allParams, "--build-only")
 	}
-	if !lo.Contains(allParams, "--region") && !lo.Contains(allParams, "-r") {
-		allParams = append(allParams, "--region", cfg.PrimaryRegion)
+	if !lo.Contains(allParams, "--regions") && !lo.Contains(allParams, "-r") {
+		allParams = append(allParams, "--regions", cfg.PrimaryRegion)
 	}
 	res := tempDir.
 		NewCommand("fly", allParams...).
